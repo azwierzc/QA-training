@@ -5,7 +5,6 @@ import json
 import datasets
 from datasets import load_metric
 import transformers
-from trainer_qa import QuestionAnsweringTrainer
 from transformers import (
     AutoConfig,
     AutoModelForQuestionAnswering,
@@ -20,8 +19,9 @@ from transformers import (
 )
 from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils.versions import require_version
-from QA_training.data.utils_data import load_dataset, select_samples
 from utils_qa import postprocess_qa_predictions
+from trainer_qa import QuestionAnsweringTrainer
+from data.utils_data import load_dataset, select_samples
 require_version("datasets>=1.8.0")
 logger = logging.getLogger(__name__)
 

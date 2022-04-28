@@ -20,16 +20,12 @@ from transformers import (
     set_seed,
 )
 from transformers.trainer_utils import get_last_checkpoint
-from QA_training.data.utils_data import load_dataset, select_samples
+from data.utils_data import load_dataset, select_samples
 from evaluation import evaluate
 logger = logging.getLogger(__name__)
 
 with open("args.json", "r", encoding="utf-8") as j:
     args = json.load(j)
-
-question_answering_column_name_mapping = {
-    "squad_v2": ("question", "context", "answer"),
-}
 
 
 def main():
