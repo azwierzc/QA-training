@@ -6,7 +6,7 @@
   "overwrite_output_dir": true,
   "model_name": "dkleczek/bert-base-polish-uncased-v1",
   "train_file": "plsquad_25_04.json",
-  "per_device_train_batch_size": 1,
+  "per_device_train_batch_size": 8,
   "per_device_eval_batch_size": 8,
   "max_train_samples": null,
   "max_val_samples": null,
