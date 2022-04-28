@@ -21,7 +21,8 @@ from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils.versions import require_version
 from utils_qa import postprocess_qa_predictions
 from trainer_qa import QuestionAnsweringTrainer
-from utils_data import load_dataset, select_samples
+#from utils_data import load_dataset, select_samples
+import utils_data
 require_version("datasets>=1.8.0")
 logger = logging.getLogger(__name__)
 
@@ -84,7 +85,7 @@ def main():
             "requirement"
         )
 
-    dataset = load_dataset("./../data/plsquad_25_04.json", "./../data/plsquad_25_04.json", "./../data/plsquad_25_04.json", seed=args["seed"])
+    dataset = utils_data.load_dataset("./../data/plsquad_25_04.json", "./../data/plsquad_25_04.json", "./../data/plsquad_25_04.json", seed=args["seed"])
     # Padding side determines if we do (question|context) or (context|question).
     pad_on_right = tokenizer.padding_side == "right"
 
@@ -177,7 +178,7 @@ def main():
     if training_args.do_train:
         if "train" not in dataset:
             raise ValueError("--do_train requires a train dataset")
-        train_dataset = select_samples(dataset["train"], args["max_train_samples"])
+        train_dataset = utils_data.select_samples(dataset["train"], args["max_train_samples"])
 
         # Create train feature from dataset
         with training_args.main_process_first(desc="train dataset map pre-processing"):
@@ -190,7 +191,7 @@ def main():
             )
 
         # Number of samples might increase during Feature Creation, We select only specified max samples
-        train_dataset = select_samples(train_dataset, args["max_train_samples"])
+        train_dataset = utils_data.select_samples(train_dataset, args["max_train_samples"])
 
 
     # ============================================= PREPARING VALIDATION FEATURES =============================================
@@ -243,7 +244,7 @@ def main():
     if training_args.do_eval:
         if "val" not in dataset:
             raise ValueError("--do_eval requires a validation dataset")
-        eval_examples = select_samples(dataset["val"], args["max_val_samples"])
+        eval_examples = utils_data.select_samples(dataset["val"], args["max_val_samples"])
 
         # Validation Feature Creation
         with training_args.main_process_first(desc="validation dataset map pre-processing"):
@@ -255,16 +256,15 @@ def main():
                 load_from_cache_file=not False,
                 desc="Creating features for validation dataset",
             )
-
         # Number of samples might increase during Feature Creation, We select only specified max samples
-        eval_dataset = select_samples(eval_dataset, args["max_val_samples"])
+        eval_dataset = utils_data.select_samples(eval_dataset, args["max_val_samples"])
 
 
     # ============================================= PREPARING PREDICTION FEATURES =============================================
     if training_args.do_predict:
         if "test" not in dataset:
             raise ValueError("--do_predict requires a test dataset")
-        predict_examples = dataset["test"]
+        predict_examples = utils_data.select_samples(dataset["test"], args["max_predict_samples"])
 
         # Predict Feature Creation
         with training_args.main_process_first(desc="prediction dataset map pre-processing"):
@@ -276,7 +276,7 @@ def main():
                 load_from_cache_file=not False,
                 desc="Creating features for prediction dataset",
             )
-
+        predict_dataset = utils_data.select_samples(predict_dataset, args["max_predict_samples"])
 
     # ============================================= SETTING TRAINER =============================================
     # Data collator

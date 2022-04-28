@@ -20,7 +20,7 @@ from transformers import (
     set_seed,
 )
 from transformers.trainer_utils import get_last_checkpoint
-from utils_data import load_dataset, select_samples
+import utils_data
 from evaluation import evaluate
 logger = logging.getLogger(__name__)
 
@@ -84,7 +84,7 @@ def main():
     if model.config.decoder_start_token_id is None:
         raise ValueError("Make sure that `config.decoder_start_token_id` is correctly defined")
 
-    dataset = load_dataset("./../data/" + args["train_file"], seed=args["seed"])
+    dataset = utils_data.load_dataset("./../data/" + args["train_file"], seed=args["seed"])
 
     if training_args.label_smoothing_factor > 0 and not hasattr(model, "prepare_decoder_input_ids_from_labels"):
         logger.warning(
@@ -116,15 +116,15 @@ def main():
         return encodings
 
 
-    train_dataset = select_samples(dataset["train"], args["max_train_samples"])
+    train_dataset = utils_data.select_samples(dataset["train"], args["max_train_samples"])
     train_dataset = train_dataset.map(add_eos_to_examples)
     train_dataset = train_dataset.map(convert_to_features, batched=True, remove_columns=train_dataset.column_names)
 
-    val_examples = select_samples(dataset["val"], args["max_val_samples"])
+    val_examples = utils_data.select_samples(dataset["val"], args["max_val_samples"])
     val_dataset = val_examples.map(add_eos_to_examples)
     val_dataset = val_dataset.map(convert_to_features, batched=True, remove_columns=val_dataset.column_names)
 
-    test_examples = select_samples(dataset["test"], args["max_predict_samples"])
+    test_examples = utils_data.select_samples(dataset["test"], args["max_predict_samples"])
     test_dataset = test_examples.map(add_eos_to_examples)
     test_dataset = test_dataset.map(convert_to_features, batched=True, remove_columns=test_dataset.column_names)
 
@@ -205,11 +205,6 @@ def main():
 
     # ============================================= PREDICTION =============================================
     if training_args.do_predict:
-        test_examples = select_samples(dataset["test"], args["max_val_samples"])
-        test_dataset = test_examples.map(add_eos_to_examples)
-        test_dataset = test_dataset.map(convert_to_features, batched=True)
-        test_dataset.set_format(type='torch', columns=columns)
-
         logger.info("*** Predict ***")
 
         dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=args["per_device_eval_batch_size"])
