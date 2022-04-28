@@ -20,7 +20,7 @@ from transformers import (
     set_seed,
 )
 from transformers.trainer_utils import get_last_checkpoint
-from data.utils_data import load_dataset, select_samples
+from utils_data import load_dataset, select_samples
 from evaluation import evaluate
 logger = logging.getLogger(__name__)
 
