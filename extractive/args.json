@@ -1,0 +1,21 @@
+{
+  "do_train": true,
+  "num_train_epochs": 3,
+  "do_eval": true,
+  "do_predict": false,
+  "overwrite_output_dir": true,
+  "model_name": "dkleczek/bert-base-polish-uncased-v1",
+  "train_file": "plsquad_25_04.json",
+  "per_device_train_batch_size": 1,
+  "per_device_eval_batch_size": 8,
+  "max_train_samples": 10,
+  "max_val_samples": null,
+  "resume_from_checkpoint": null,
+  "max_answer_length": 30,
+  "max_seq_length": 384,
+  "doc_stride": 128,
+  "null_score_diff_threshold": 0.0,
+  "impossible_answers": true,
+  "output_dir": "out",
+  "seed": 42
+}
